@@ -26,8 +26,15 @@ public class EWAHCompressedBitmapTest {
 	    for(long k=Integer.MAX_VALUE-100; k<Integer.MAX_VALUE; ++k) {
 		    b.set(k);
 		}
+	    for(long k=Long.MAX_VALUE-100; k<Long.MAX_VALUE; ++k) {
+		    b.set(k);
+		}
 	    IntIterator iterator = b.intIterator();
 	    for(long k=Integer.MAX_VALUE-100; k<Integer.MAX_VALUE; ++k) {
+		    Assert.assertTrue(iterator.hasNext());
+		    Assert.assertEquals(k, iterator.next());
+		}
+	    for(long k=Long.MAX_VALUE-100; k<Long.MAX_VALUE; ++k) {
 		    Assert.assertTrue(iterator.hasNext());
 		    Assert.assertEquals(k, iterator.next());
 		}
