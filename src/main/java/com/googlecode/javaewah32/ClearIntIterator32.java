@@ -18,17 +18,17 @@ import static com.googlecode.javaewah32.EWAHCompressedBitmap32.WORD_IN_BITS;
 final class ClearIntIterator32 implements IntIterator {
 
     private final EWAHIterator32 ewahIter;
-    private final int sizeInBits;
+    private final long sizeInBits;
     private final Buffer buffer;
-    private int position;
-    private int runningLength;
+    private long position;
+    private long runningLength;
     private int word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
-    ClearIntIterator32(EWAHIterator32 ewahIter, int sizeInBits) {
+    ClearIntIterator32(EWAHIterator32 ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
         this.sizeInBits = sizeInBits;
         this.buffer = ewahIter.buffer();
@@ -52,7 +52,7 @@ final class ClearIntIterator32 implements IntIterator {
 
     @Override
     public int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position++;
         } else {
@@ -61,7 +61,7 @@ final class ClearIntIterator32 implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToNext();
-        return answer;
+        return (int) answer;
     }
 
     private void setRunningLengthWord(RunningLengthWord32 rlw) {
@@ -84,7 +84,7 @@ final class ClearIntIterator32 implements IntIterator {
         while (this.word == 0 && this.wordPosition < this.wordLength) {
             this.word = ~this.buffer.getWord(this.wordPosition++);
             if (this.wordPosition == this.wordLength && !this.ewahIter.hasNext()) {
-                final int usedBitsInLast = this.sizeInBits % WORD_IN_BITS;
+                final int usedBitsInLast = (int) (this.sizeInBits % WORD_IN_BITS);
                 if (usedBitsInLast > 0) {
                     this.word &= ((~0) >>> (WORD_IN_BITS - usedBitsInLast));
                 }

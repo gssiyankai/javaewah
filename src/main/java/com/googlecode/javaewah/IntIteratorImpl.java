@@ -19,12 +19,12 @@ final class IntIteratorImpl implements IntIterator {
 
     private final EWAHIterator ewahIter;
     private final Buffer buffer;
-    private int position;
-    private int runningLength;
+    private long position;
+    private long runningLength;
     private long word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
     IntIteratorImpl(EWAHIterator ewahIter) {
@@ -50,7 +50,7 @@ final class IntIteratorImpl implements IntIterator {
 
     @Override
     public int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position++;
         } else {
@@ -59,11 +59,11 @@ final class IntIteratorImpl implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToNext();
-        return answer;
+        return (int) answer;
     }
 
     private void setRunningLengthWord(RunningLengthWord rlw) {
-        this.runningLength = WORD_IN_BITS * (int) rlw.getRunningLength() + this.position;
+        this.runningLength = WORD_IN_BITS * rlw.getRunningLength() + this.position;
         if (!rlw.getRunningBit()) {
             this.position = this.runningLength;
         }

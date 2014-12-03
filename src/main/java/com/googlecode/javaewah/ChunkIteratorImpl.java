@@ -17,11 +17,11 @@ import static com.googlecode.javaewah.EWAHCompressedBitmap.WORD_IN_BITS;
 final class ChunkIteratorImpl implements ChunkIterator {
 
     private final EWAHIterator ewahIter;
-    private final int sizeInBits;
+    private final long sizeInBits;
     private final Buffer buffer;
-    private int position;
+    private long position;
     private boolean runningBit;
-    private int runningLength;
+    private long runningLength;
     private long word;
     private long wordMask;
     private int wordPosition;
@@ -30,7 +30,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
     private Boolean nextBit;
     private int nextLength;
 
-    ChunkIteratorImpl(EWAHIterator ewahIter, int sizeInBits) {
+    ChunkIteratorImpl(EWAHIterator ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
         this.sizeInBits = sizeInBits;
         this.buffer = ewahIter.buffer();
@@ -132,7 +132,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
     }
 
     private int runningOffset() {
-        return this.runningLength - this.position;
+        return (int) (this.runningLength - this.position);
     }
 
     private void movePosition(int offset) {

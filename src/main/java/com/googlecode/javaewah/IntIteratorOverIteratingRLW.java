@@ -12,12 +12,12 @@ import static com.googlecode.javaewah.EWAHCompressedBitmap.WORD_IN_BITS;
  */
 public class IntIteratorOverIteratingRLW implements IntIterator {
     final IteratingRLW parent;
-    private int position;
-    private int runningLength;
+    private long position;
+    private long runningLength;
     private long word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
     /**
@@ -51,7 +51,7 @@ public class IntIteratorOverIteratingRLW implements IntIterator {
 
     @Override
     public final int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position++;
         } else {
@@ -60,11 +60,11 @@ public class IntIteratorOverIteratingRLW implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToNext();
-        return answer;
+        return (int) answer;
     }
 
     private void setupForCurrentRunningLengthWord() {
-        this.runningLength = WORD_IN_BITS * (int) this.parent.getRunningLength() + this.position;
+        this.runningLength = WORD_IN_BITS * this.parent.getRunningLength() + this.position;
 
         if (!this.parent.getRunningBit()) {
             this.position = this.runningLength;

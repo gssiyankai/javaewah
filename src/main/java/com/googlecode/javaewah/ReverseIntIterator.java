@@ -17,18 +17,18 @@ import static com.googlecode.javaewah.EWAHCompressedBitmap.WORD_IN_BITS;
 final class ReverseIntIterator implements IntIterator {
 
     private final ReverseEWAHIterator ewahIter;
-    private final int sizeInBits;
+    private final long sizeInBits;
     private final Buffer buffer;
-    private int position;
+    private long position;
     private boolean runningBit;
-    private int runningLength;
+    private long runningLength;
     private long word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
-    ReverseIntIterator(ReverseEWAHIterator ewahIter, int sizeInBits) {
+    ReverseIntIterator(ReverseEWAHIterator ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
         this.sizeInBits = sizeInBits;
         this.buffer = ewahIter.buffer();
@@ -44,7 +44,7 @@ final class ReverseIntIterator implements IntIterator {
 
     @Override
     public int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position--;
         } else {
@@ -53,7 +53,7 @@ final class ReverseIntIterator implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToPreviousRLW();
-        return answer;
+        return (int) answer;
     }
 
     private boolean moveToPreviousRLW() {
@@ -82,7 +82,7 @@ final class ReverseIntIterator implements IntIterator {
         while (this.word == 0 && this.wordLength > 0) {
             this.word = Long.reverse(this.buffer.getWord(this.wordPosition + this.wordLength--));
             if (this.position == this.sizeInBits - 1) {
-                final int usedBitsInLast = this.sizeInBits % WORD_IN_BITS;
+                final int usedBitsInLast = (int) (this.sizeInBits % WORD_IN_BITS);
                 if (usedBitsInLast > 0) {
                     this.word = (this.word >>> (WORD_IN_BITS - usedBitsInLast));
                 }

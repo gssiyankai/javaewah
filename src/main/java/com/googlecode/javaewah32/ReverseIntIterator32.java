@@ -19,18 +19,18 @@ import static com.googlecode.javaewah32.EWAHCompressedBitmap32.WORD_IN_BITS;
 final class ReverseIntIterator32 implements IntIterator {
 
     private final ReverseEWAHIterator32 ewahIter;
-    private final int sizeInBits;
+    private final long sizeInBits;
     private final Buffer buffer;
-    private int position;
+    private long position;
     private boolean runningBit;
-    private int runningLength;
+    private long runningLength;
     private int word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
-    ReverseIntIterator32(ReverseEWAHIterator32 ewahIter, int sizeInBits) {
+    ReverseIntIterator32(ReverseEWAHIterator32 ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
         this.sizeInBits = sizeInBits;
         this.buffer = ewahIter.buffer();
@@ -46,7 +46,7 @@ final class ReverseIntIterator32 implements IntIterator {
 
     @Override
     public int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position--;
         } else {
@@ -55,7 +55,7 @@ final class ReverseIntIterator32 implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToPreviousRLW();
-        return answer;
+        return (int) answer;
     }
 
     private boolean moveToPreviousRLW() {
@@ -84,7 +84,7 @@ final class ReverseIntIterator32 implements IntIterator {
         while (this.word == 0 && this.wordLength > 0) {
             this.word = Integer.reverse(this.buffer.getWord(this.wordPosition + this.wordLength--));
             if (this.position == this.sizeInBits - 1) {
-                final int usedBitsInLast = this.sizeInBits % WORD_IN_BITS;
+                final int usedBitsInLast = (int) (this.sizeInBits % WORD_IN_BITS);
                 if (usedBitsInLast > 0) {
                     this.word = (this.word >>> (WORD_IN_BITS - usedBitsInLast));
                 }

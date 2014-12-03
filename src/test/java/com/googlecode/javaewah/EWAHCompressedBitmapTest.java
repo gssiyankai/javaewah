@@ -20,6 +20,20 @@ import static com.googlecode.javaewah.EWAHCompressedBitmap.WORD_IN_BITS;
 @SuppressWarnings("javadoc")
 public class EWAHCompressedBitmapTest {
 
+	@Test
+	public void setMaxPosition() {
+		EWAHCompressedBitmap b = EWAHCompressedBitmap.bitmapOf();
+		for(int i=Integer.MAX_VALUE-100; i<Integer.MAX_VALUE; ++i) {
+			b.set(i);
+		}
+		IntIterator iterator = b.intIterator();
+		for(int i=Integer.MAX_VALUE-100; i<Integer.MAX_VALUE; ++i) {
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals(i, iterator.next());
+		}
+		Assert.assertFalse(iterator.hasNext());
+	}
+	
     @Test
     public void clearStressTest() {
         System.out.println("clear stress test");

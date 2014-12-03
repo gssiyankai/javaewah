@@ -16,17 +16,17 @@ import static com.googlecode.javaewah.EWAHCompressedBitmap.WORD_IN_BITS;
 final class ClearIntIterator implements IntIterator {
 
     private final EWAHIterator ewahIter;
-    private final int sizeInBits;
+    private final long sizeInBits;
     private final Buffer buffer;
-    private int position;
-    private int runningLength;
+    private long position;
+    private long runningLength;
     private long word;
     private int wordPosition;
     private int wordLength;
-    private int literalPosition;
+    private long literalPosition;
     private boolean hasNext;
 
-    ClearIntIterator(EWAHIterator ewahIter, int sizeInBits) {
+    ClearIntIterator(EWAHIterator ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
         this.sizeInBits = sizeInBits;
         this.buffer = ewahIter.buffer();
@@ -50,7 +50,7 @@ final class ClearIntIterator implements IntIterator {
 
     @Override
     public int next() {
-        final int answer;
+        final long answer;
         if (runningHasNext()) {
             answer = this.position++;
         } else {
@@ -59,12 +59,12 @@ final class ClearIntIterator implements IntIterator {
             this.word ^= t;
         }
         this.hasNext = this.moveToNext();
-        return answer;
+        return (int) answer;
     }
 
     private void setRunningLengthWord(RunningLengthWord rlw) {
         this.runningLength = Math.min(this.sizeInBits,
-                                      WORD_IN_BITS * (int) rlw.getRunningLength() + this.position);
+                                      WORD_IN_BITS * rlw.getRunningLength() + this.position);
         if (rlw.getRunningBit()) {
             this.position = this.runningLength;
         }
@@ -81,7 +81,7 @@ final class ClearIntIterator implements IntIterator {
         while (this.word == 0 && this.wordPosition < this.wordLength) {
             this.word = ~this.buffer.getWord(this.wordPosition++);
             if (this.wordPosition == this.wordLength && !this.ewahIter.hasNext()) {
-                final int usedBitsInLast = this.sizeInBits % WORD_IN_BITS;
+                final int usedBitsInLast = (int) (this.sizeInBits % WORD_IN_BITS);
                 if (usedBitsInLast > 0) {
                     this.word &= ((~0l) >>> (WORD_IN_BITS - usedBitsInLast));
                 }
