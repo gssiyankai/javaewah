@@ -30,7 +30,7 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
     private int wordLength;
     private boolean hasNext;
     private Boolean nextBit;
-    private int nextLength;
+    private long nextLength;
 
     ChunkIteratorImpl32(EWAHIterator32 ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
@@ -50,7 +50,7 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
     }
 
     @Override
-    public int nextLength() {
+    public long nextLength() {
         return this.nextLength;
     }
 
@@ -60,7 +60,7 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
     }
 
     @Override
-    public void move(int bits) {
+    public void move(long bits) {
         this.nextLength -= bits;
         if(this.nextLength <= 0) {
             do {
@@ -82,7 +82,7 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
         return true;
     }
 
-  private void setRLW(RunningLengthWord32 rlw) {
+    private void setRLW(RunningLengthWord32 rlw) {
         this.runningLength = Math.min(this.sizeInBits,
                                       this.position + WORD_IN_BITS * rlw.getRunningLength());
         this.runningBit = rlw.getRunningBit();
@@ -114,7 +114,7 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
         if(runningHasNext()) {
             if(this.nextBit == null || this.nextBit == this.runningBit) {
                 this.nextBit = this.runningBit;
-                int offset = runningOffset();
+                long offset = runningOffset();
                 this.nextLength += offset;
                 movePosition(offset);
                 updateNext();
@@ -133,11 +133,11 @@ final class ChunkIteratorImpl32 implements ChunkIterator {
         }
     }
 
-    private int runningOffset() {
-        return (int) (this.runningLength - this.position);
+    private long runningOffset() {
+        return this.runningLength - this.position;
     }
 
-    private void movePosition(int offset) {
+    private void movePosition(long offset) {
         this.position += offset;
     }
 

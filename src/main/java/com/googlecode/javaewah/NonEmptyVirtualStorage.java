@@ -85,7 +85,7 @@ public class NonEmptyVirtualStorage implements BitmapStorage {
      * @see com.googlecode.javaewah.BitmapStorage#setSizeInBitsWithinLastWord(int)
      */
     @Override
-    public void setSizeInBitsWithinLastWord(int bits) {
+    public void setSizeInBitsWithinLastWord(long bits) {
     }
 
     static class NonEmptyException extends RuntimeException {

@@ -31,7 +31,7 @@ public interface ChunkIterator {
      *
      * @return the length
      */
-    int nextLength();
+    long nextLength();
 
     /**
      * Move the iterator at the next different bit
@@ -43,6 +43,6 @@ public interface ChunkIterator {
      *
      * @param bits  the number of bits to skip
      */
-    void move(int bits);
+    void move(long bits);
 
 }

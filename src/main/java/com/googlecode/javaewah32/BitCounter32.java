@@ -56,7 +56,7 @@ public final class BitCounter32 implements BitmapStorage32 {
      * @param number how many to words add
      */
     @Override
-    public void addStreamOfEmptyWords(boolean v, int number) {
+    public void addStreamOfEmptyWords(boolean v, long number) {
         if (v) {
             this.oneBits += number
                     * EWAHCompressedBitmap32.WORD_IN_BITS;
@@ -89,15 +89,15 @@ public final class BitCounter32 implements BitmapStorage32 {
      *
      * @return number of set bits
      */
-    public int getCount() {
+    public long getCount() {
         return this.oneBits;
     }
 
     @Override
-    public void setSizeInBitsWithinLastWord(int bits) {
+    public void setSizeInBitsWithinLastWord(long bits) {
         // no action
     }
 
-    private int oneBits;
+    private long oneBits;
 
 }

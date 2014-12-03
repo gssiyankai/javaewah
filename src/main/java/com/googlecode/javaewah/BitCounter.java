@@ -87,7 +87,7 @@ public final class BitCounter implements BitmapStorage {
      *
      * @return number of set bits
      */
-    public int getCount() {
+    public long getCount() {
         return this.oneBits;
     }
 
@@ -99,9 +99,9 @@ public final class BitCounter implements BitmapStorage {
      */
     // @Override : causes problems with Java 1.5
     @Override
-    public void setSizeInBitsWithinLastWord(int bits) {
+    public void setSizeInBitsWithinLastWord(long bits) {
         // no action
     }
 
-    private int oneBits;
+    private long oneBits;
 }

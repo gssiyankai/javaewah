@@ -47,7 +47,7 @@ public interface BitmapStorage32 {
      * @param v      zeros or ones
      * @param number how many to words add
      */
-    void addStreamOfEmptyWords(final boolean v, final int number);
+    void addStreamOfEmptyWords(final boolean v, final long number);
 
     /**
      * Like "addStreamOfLiteralWords" but negates the words being added.
@@ -72,5 +72,5 @@ public interface BitmapStorage32 {
      *  
      * @param size         the size in bits
      */
-    void setSizeInBitsWithinLastWord(final int size);
+    void setSizeInBitsWithinLastWord(final long size);
 }

@@ -24,17 +24,17 @@ public class EWAHCompressedBitmap32Test {
 
 	@Test
 	public void setMaxPosition() {
-		EWAHCompressedBitmap32 b = EWAHCompressedBitmap32.bitmapOf();
-		for(int i=Integer.MAX_VALUE-100; i<Integer.MAX_VALUE; ++i) {
-			b.set(i);
+	    EWAHCompressedBitmap32 b = EWAHCompressedBitmap32.bitmapOf();
+	    for(long k=Integer.MAX_VALUE-100; k<Integer.MAX_VALUE; ++k) {
+		    b.set(k);
 		}
-		IntIterator iterator = b.intIterator();
-		for(int i=Integer.MAX_VALUE-100; i<Integer.MAX_VALUE; ++i) {
-			Assert.assertTrue(iterator.hasNext());
-			Assert.assertEquals(i, iterator.next());
+	    IntIterator iterator = b.intIterator();
+	    for(long k=Integer.MAX_VALUE-100; k<Integer.MAX_VALUE; ++k) {
+		    Assert.assertTrue(iterator.hasNext());
+		    Assert.assertEquals(k, iterator.next());
 		}
-		Assert.assertFalse(iterator.hasNext());
-	}
+	    Assert.assertFalse(iterator.hasNext());
+    }
 	
     @Test
     public void clearStressTest() {
@@ -2085,7 +2085,7 @@ public class EWAHCompressedBitmap32Test {
     static void assertCardinality(BitSet jdkBitmap,
                                   EWAHCompressedBitmap32 ewahBitmap) {
         final int c1 = jdkBitmap.cardinality();
-        final int c2 = ewahBitmap.cardinality();
+        final long c2 = ewahBitmap.cardinality();
         Assert.assertEquals(c1, c2);
     }
 

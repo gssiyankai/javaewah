@@ -107,13 +107,13 @@ public final class FastAggregation {
     public static void bufferedorWithContainer(
             final BitmapStorage container, final int bufSize,
             final EWAHCompressedBitmap... bitmaps) {
-        int range = 0;
+        long range = 0;
         EWAHCompressedBitmap[] sbitmaps = bitmaps.clone();
         Arrays.sort(sbitmaps, new Comparator<EWAHCompressedBitmap>() {
             @Override
             public int compare(EWAHCompressedBitmap a,
                                EWAHCompressedBitmap b) {
-                return b.sizeInBits() - a.sizeInBits();
+                return Long.compare(b.sizeInBits(), a.sizeInBits());
             }
         });
 
@@ -171,13 +171,13 @@ public final class FastAggregation {
     public static void bufferedxorWithContainer(
             final BitmapStorage container, final int bufSize,
             final EWAHCompressedBitmap... bitmaps) {
-        int range = 0;
+        long range = 0;
         EWAHCompressedBitmap[] sbitmaps = bitmaps.clone();
         Arrays.sort(sbitmaps, new Comparator<EWAHCompressedBitmap>() {
             @Override
             public int compare(EWAHCompressedBitmap a,
                                EWAHCompressedBitmap b) {
-                return b.sizeInBits() - a.sizeInBits();
+                return Long.compare(b.sizeInBits(), a.sizeInBits());
             }
         });
 
@@ -374,7 +374,7 @@ public final class FastAggregation {
             return;
         }
 
-        int maxSize = sortedBitmaps[0].sizeInBits();
+        long maxSize = sortedBitmaps[0].sizeInBits();
 
         while (true) {
             long maxOneRl = 0;

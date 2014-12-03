@@ -46,7 +46,7 @@ public interface LogicalElement<T> {
      *
      * @return the number of bits represented by this element
      */
-    int sizeInBits();
+    long sizeInBits();
 
     /**
      * Should report the storage requirement

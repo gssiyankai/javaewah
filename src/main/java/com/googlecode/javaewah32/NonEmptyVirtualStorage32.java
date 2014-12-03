@@ -51,7 +51,7 @@ public class NonEmptyVirtualStorage32 implements BitmapStorage32 {
      * throws a NonEmptyException exception, otherwise, nothing happens.
      */
     @Override
-    public void addStreamOfEmptyWords(boolean v, int number) {
+    public void addStreamOfEmptyWords(boolean v, long number) {
         if (v && (number > 0))
             throw nonEmptyException;
     }
@@ -77,7 +77,7 @@ public class NonEmptyVirtualStorage32 implements BitmapStorage32 {
      * @see com.googlecode.javaewah.BitmapStorage#setSizeInBitsWithinLastWord(int)
      */
     @Override
-    public void setSizeInBitsWithinLastWord(int bits) {
+    public void setSizeInBitsWithinLastWord(long bits) {
     }
 
     static class NonEmptyException extends RuntimeException {

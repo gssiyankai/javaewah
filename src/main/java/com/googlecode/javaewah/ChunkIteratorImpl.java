@@ -28,7 +28,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
     private int wordLength;
     private boolean hasNext;
     private Boolean nextBit;
-    private int nextLength;
+    private long nextLength;
 
     ChunkIteratorImpl(EWAHIterator ewahIter, long sizeInBits) {
         this.ewahIter = ewahIter;
@@ -48,7 +48,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
     }
 
     @Override
-    public int nextLength() {
+    public long nextLength() {
         return this.nextLength;
     }
 
@@ -58,7 +58,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
     }
 
     @Override
-    public void move(int bits) {
+    public void move(long bits) {
         this.nextLength -= bits;
         if(this.nextLength <= 0) {
             do {
@@ -82,7 +82,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
 
     private void setRLW(RunningLengthWord rlw) {
         this.runningLength = Math.min(this.sizeInBits,
-                                      this.position + WORD_IN_BITS * (int) rlw.getRunningLength());
+                                      this.position + WORD_IN_BITS * rlw.getRunningLength());
         this.runningBit = rlw.getRunningBit();
         this.wordPosition = this.ewahIter.literalWords();
         this.wordLength = this.wordPosition + rlw.getNumberOfLiteralWords();
@@ -112,7 +112,7 @@ final class ChunkIteratorImpl implements ChunkIterator {
         if(runningHasNext()) {
             if(this.nextBit == null || this.nextBit == this.runningBit) {
                 this.nextBit = this.runningBit;
-                int offset = runningOffset();
+                long offset = runningOffset();
                 this.nextLength += offset;
                 movePosition(offset);
                 updateNext();
@@ -131,11 +131,11 @@ final class ChunkIteratorImpl implements ChunkIterator {
         }
     }
 
-    private int runningOffset() {
-        return (int) (this.runningLength - this.position);
+    private long runningOffset() {
+        return this.runningLength - this.position;
     }
 
-    private void movePosition(int offset) {
+    private void movePosition(long offset) {
         this.position += offset;
     }
 

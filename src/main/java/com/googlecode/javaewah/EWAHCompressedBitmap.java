@@ -414,7 +414,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.0
      */
-    public int andCardinality(final EWAHCompressedBitmap a) {
+    public long andCardinality(final EWAHCompressedBitmap a) {
         final BitCounter counter = new BitCounter();
         andToContainer(a, counter);
         return counter.getCount();
@@ -515,7 +515,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.0
      */
-    public int andNotCardinality(final EWAHCompressedBitmap a) {
+    public long andNotCardinality(final EWAHCompressedBitmap a) {
         final BitCounter counter = new BitCounter();
         andNotToContainer(a, counter);
         return counter.getCount();
@@ -527,8 +527,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      *
      * @return the number of bits set to true
      */
-    public int cardinality() {
-        int counter = 0;
+    public long cardinality() {
+        long counter = 0;
         final EWAHIterator i = this.getEWAHIterator();
         while (i.hasNext()) {
             RunningLengthWord localrlw = i.next();
@@ -1051,7 +1051,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.0
      */
-    public int orCardinality(final EWAHCompressedBitmap a) {
+    public long orCardinality(final EWAHCompressedBitmap a) {
         final BitCounter counter = new BitCounter();
         orToContainer(a, counter);
         return counter.getCount();
@@ -1096,20 +1096,19 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i the bit we are interested in
      * @return whether the bit is set to true
      */
-    public boolean get(final int i) {
+    public boolean get(final long i) {
         if ((i < 0) || (i >= this.sizeInBits))
             return false;
-        int wordChecked = 0;
+        long wordChecked = 0;
         final IteratingRLW j = getIteratingRLW();
-        final int wordi = i / WORD_IN_BITS;
+        final long wordi = i / WORD_IN_BITS;
         while (wordChecked <= wordi) {
             wordChecked += j.getRunningLength();
             if (wordi < wordChecked) {
                 return j.getRunningBit();
             }
             if (wordi < wordChecked + j.getNumberOfLiteralWords()) {
-                final long w = j.getLiteralWordAt(wordi
-                        - wordChecked);
+                final long w = j.getLiteralWordAt((int) (wordi - wordChecked));
                 return (w & (1l << i)) != 0;
             }
             wordChecked += j.getNumberOfLiteralWords();
@@ -1124,8 +1123,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * 
      * @return location of the first set bit or -1
      */
-    public int getFirstSetBit() {
-        int nword = 0;
+    public long getFirstSetBit() {
+        long nword = 0;
         for(int pos = 0; pos < this.buffer.sizeInWords(); ++pos) {
            long rl = RunningLengthWord.getRunningLength(this.buffer, pos);
            boolean rb = RunningLengthWord.getRunningBit(this.buffer, pos);
@@ -1160,7 +1159,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i the index
      * @return true if the value was unset
      */
-    public boolean clear(final int i) {
+    public boolean clear(final long i) {
     	return set(i, false);
     }
 
@@ -1180,7 +1179,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i the index
      * @return true if the value was set
      */
-    public boolean set(final int i) {
+    public boolean set(final long i) {
         return set(i, true);
     }
     
@@ -1190,7 +1189,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i     the index
      * @param value the value 
      */
-    private boolean set(int i, boolean value) {
+    private boolean set(long i, boolean value) {
         if (i < this.sizeInBits) {
             locateAndSet(i, value);
         } else {
@@ -1205,8 +1204,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i the index
      * @param value the value
      */
-    private void extendAndSet(int i, boolean value) {
-        final int dist = distanceInWords(i);
+    private void extendAndSet(long i, boolean value) {
+        final long dist = distanceInWords(i);
         this.sizeInBits = i + 1;
         if (value) {
             if (dist > 0) {
@@ -1241,8 +1240,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param i the index
      * @param value the value
      */
-    private void locateAndSet(int i, boolean value) {
-        int nbits = 0;
+    private void locateAndSet(long i, boolean value) {
+        long nbits = 0;
         for(int pos = 0; pos < this.buffer.sizeInWords(); ) {
             long rl = RunningLengthWord.getRunningLength(this.buffer, pos);
             boolean rb = RunningLengthWord.getRunningBit(this.buffer, pos);
@@ -1263,9 +1262,9 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
         }
     }
 
-    private void setInRunningLength(boolean value, int i, int nbits, int pos, long rl, boolean rb, long lw) {
+    private void setInRunningLength(boolean value, long i, long nbits, int pos, long rl, boolean rb, long lw) {
         if(value != rb) {
-            int wordPosition = (i - nbits) / WORD_IN_BITS + 1;
+            int wordPosition = (int) ((i - nbits) / WORD_IN_BITS + 1);
             int addedWords = (wordPosition==rl) ? 1 : 2;
             this.buffer.expand(pos+1, addedWords);
             long mask = 1l << i % WORD_IN_BITS;
@@ -1285,8 +1284,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
         }
     }
 
-    private void setInLiteralWords(boolean value, int i, int nbits, int pos, long rl, boolean rb, long lw) {
-        int wordPosition = (i - nbits) / WORD_IN_BITS + 1;
+    private void setInLiteralWords(boolean value, long i, long nbits, int pos, long rl, boolean rb, long lw) {
+        int wordPosition = (int) ((i - nbits) / WORD_IN_BITS + 1);
         long mask = 1l << i % WORD_IN_BITS;
         if(value) {
             this.buffer.orWord(pos + wordPosition, mask);
@@ -1352,7 +1351,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
     }
 
     @Override
-    public void setSizeInBitsWithinLastWord(final int size) {
+    public void setSizeInBitsWithinLastWord(final long size) {
         if ((size + WORD_IN_BITS - 1) / WORD_IN_BITS != (this.sizeInBits + WORD_IN_BITS - 1) / WORD_IN_BITS)
             throw new RuntimeException(
                     "You can only reduce the size of the bitmap within the scope of the last word. To extend the bitmap, please call setSizeInBits(int,boolean).");
@@ -1399,14 +1398,14 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @param defaultValue the default boolean value
      * @return true if the update was possible
      */
-    public boolean setSizeInBits(final int size, final boolean defaultValue) {
+    public boolean setSizeInBits(final long size, final boolean defaultValue) {
         if (size <= this.sizeInBits) {
             return false;
         }
         if ((this.sizeInBits % WORD_IN_BITS) != 0) {
             if (!defaultValue) {
                 if (this.rlw.getNumberOfLiteralWords() > 0) {
-                    final int bitsToAdd = (int) (size - this.sizeInBits);
+                    final long bitsToAdd = size - this.sizeInBits;
                     final int usedBitsInLast = (int) (this.sizeInBits % WORD_IN_BITS);
                     final int freeBitsInLast = WORD_IN_BITS - usedBitsInLast;
                     if (this.buffer.getLastWord() == 0l) {
@@ -1426,7 +1425,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
                                                      size - this.sizeInBits);
                 final int maskShift = (int) (this.sizeInBits % WORD_IN_BITS);
                 final long mask = ((~0l) >>> (WORD_IN_BITS - maskWidth)) << maskShift;
-				this.buffer.orLastWord(mask);
+                this.buffer.orLastWord(mask);
                 if (this.buffer.getLastWord() == ~0l) {
                     this.buffer.removeLastWord();
                     this.rlw.setNumberOfLiteralWords(this.rlw.getNumberOfLiteralWords() - 1);
@@ -1439,7 +1438,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
                 (size / WORD_IN_BITS) - (this.sizeInBits / WORD_IN_BITS)
         );
         if (this.sizeInBits < size) {
-            final int dist = distanceInWords(size - 1);
+            final long dist = distanceInWords(size - 1);
             if (dist > 0) {
                 insertLiteralWord(0);
             }
@@ -1459,9 +1458,9 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      *
      * @param i the index
      */
-    private int distanceInWords(int i) {
-        return (int) (((long)i + WORD_IN_BITS) / WORD_IN_BITS
-                - ((long)this.sizeInBits + WORD_IN_BITS - 1) / WORD_IN_BITS);
+    private long distanceInWords(long i) {
+        return (i + WORD_IN_BITS) / WORD_IN_BITS
+                - (this.sizeInBits + WORD_IN_BITS - 1) / WORD_IN_BITS;
     }
 
     /**
@@ -1474,8 +1473,8 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the size in bits
      */
     @Override
-    public int sizeInBits() {
-        return (int) this.sizeInBits;
+    public long sizeInBits() {
+        return this.sizeInBits;
     }
 
     /**
@@ -1528,7 +1527,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the array containing the location of the set bits
      */
     public int[] toArray() {
-        int[] ans = new int[this.cardinality()];
+        int[] ans = new int[(int) this.cardinality()];
         int inAnsPos = 0;
         int pos = 0;
         final EWAHIterator i = this.getEWAHIterator();
@@ -1717,7 +1716,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.0
      */
-    public int xorCardinality(final EWAHCompressedBitmap a) {
+    public long xorCardinality(final EWAHCompressedBitmap a) {
         final BitCounter counter = new BitCounter();
         xorToContainer(a, counter);
         return counter.getCount();
@@ -1771,22 +1770,22 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
         container.clear();
         final ChunkIterator iterator = chunkIterator();
         final ChunkIterator aIterator = a.chunkIterator();
-        int index = 0;
+        long index = 0;
         while(iterator.hasNext() && aIterator.hasNext()) {
             if (!iterator.nextBit()) {
-                int length = iterator.nextLength();
+                long length = iterator.nextLength();
                 index += length;
                 container.setSizeInBits(index, false);
                 iterator.move(length);
             } else {
-                int length = Math.min(iterator.nextLength(), aIterator.nextLength());
+                long length = Math.min(iterator.nextLength(), aIterator.nextLength());
                 index += length;
                 container.setSizeInBits(index, aIterator.nextBit());
                 iterator.move(length);
                 aIterator.move(length);
             }
         }
-        container.setSizeInBits((int) sizeInBits, false);
+        container.setSizeInBits(sizeInBits, false);
     }
 
     /**
@@ -1874,7 +1873,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.3
      */
-    public static int andCardinality(final EWAHCompressedBitmap... bitmaps) {
+    public static long andCardinality(final EWAHCompressedBitmap... bitmaps) {
         if (bitmaps.length == 1)
             return bitmaps[0].cardinality();
         final BitCounter counter = new BitCounter();
@@ -2019,7 +2018,7 @@ public final class EWAHCompressedBitmap implements Cloneable, Externalizable,
      * @return the cardinality
      * @since 0.4.0
      */
-    public static int orCardinality(final EWAHCompressedBitmap... bitmaps) {
+    public static long orCardinality(final EWAHCompressedBitmap... bitmaps) {
         if (bitmaps.length == 1)
             return bitmaps[0].cardinality();
         final BitCounter counter = new BitCounter();
